@@ -1,1228 +1,457 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSR KESEHATAN PT Global Papua Abadi - Laporan & Sistem Informasi Pelayanan Kesehatan</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts (Inter) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- SweetAlert2 for modern alerts -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        corp: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            700: '#15803d',
-                            800: '#166534',
-                            900: '#14532d',
-                            dark: '#0f172a'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; color: black !important; }
-            .print-header { display: block !important; }
-            .shadow-sm, .shadow-md, .shadow-lg, .shadow-2xl { box-shadow: none !important; }
-            .border { border-color: #cbd5e1 !important; }
-            .tab-section { display: block !important; }
-        }
-    </style>
-</head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
-
-    <!-- HEADER BRANDING UTAMA CSR PT GLOBAL PAPUA ABADI -->
-    <header class="bg-gradient-to-r from-corp-900 via-corp-800 to-slate-900 text-white shadow-xl sticky top-0 z-40 border-b-2 border-emerald-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
-            
-            <!-- Branding Logo & Title -->
-            <div class="flex items-center space-x-3.5">
-                <div class="bg-white p-2.5 rounded-2xl text-corp-800 shadow-md border border-emerald-300 flex items-center justify-center">
-                    <i class="fa-solid fa-hand-holding-medical text-3xl"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md border border-emerald-400/30">Program Tanggung Jawab Sosial (CSR)</span>
-                    </div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                        CSR KESEHATAN PT Global Papua Abadi
-                    </h1>
-                    <p class="text-xs text-emerald-100 flex items-center gap-1.5 mt-0.5 font-medium">
-                        <i class="fa-solid fa-notes-medical text-emerald-400"></i> Sistem Informasi Laporan Pelayanan Kesehatan & Rekam Medis Per-Kampung
-                    </p>
-                </div>
-            </div>
-
-            <!-- Action Quick Header Buttons -->
-            <div class="flex items-center gap-2.5 text-sm no-print">
-                <button onclick="openKampungModal()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 border border-emerald-600/50 font-semibold px-3.5 py-2 rounded-xl transition flex items-center gap-2 text-xs sm:text-sm">
-                    <i class="fa-solid fa-map-location-dot text-emerald-400"></i> Kelola Kampung
-                </button>
-                <button onclick="openModal()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl shadow-lg transition flex items-center gap-2 text-xs sm:text-sm">
-                    <i class="fa-solid fa-plus-circle text-base"></i> Pasien Baru
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- PRINT HEADER ONLY (Visible when Printed) -->
-    <div class="hidden print-header p-6 text-center border-b-2 border-slate-800 mb-4">
-        <h1 class="text-2xl font-bold uppercase">PT GLOBAL PAPUA ABADI</h1>
-        <h2 class="text-xl font-semibold text-emerald-800">LAPORAN REKAPITULASI PELAYANAN KESEHATAN CSR MASYARAKAT</h2>
-        <p id="print-periode-info" class="text-sm text-slate-600 mt-1">Periode Pelayanan & Areal Operasional Pelayanan Kesehatan</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSR Kesehatan PT Global Papua Abadi – Sistem Informasi Pelayanan Kesehatan</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="flex min-h-screen flex-col bg-slate-100 font-sans text-slate-800">
+    <!-- ================= LAYAR MEMUAT ================= -->
+    <div id="screen-loading" class="flex flex-1 items-center justify-center">
+      <div class="text-center text-slate-500">
+        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-corp-700"></i>
+        <p class="mt-3 text-sm font-medium">Memuat sistem…</p>
+      </div>
     </div>
 
-    <!-- MAIN CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+    <!-- ================= LAYAR AUTENTIKASI ================= -->
+    <div id="screen-auth" hidden class="flex flex-1 items-center justify-center bg-gradient-to-br from-corp-900 via-corp-800 to-slate-900 p-4">
+      <div class="w-full max-w-md">
+        <div class="mb-6 text-center text-white">
+          <div class="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-corp-800 shadow-lg">
+            <i class="fa-solid fa-hand-holding-medical text-3xl"></i>
+          </div>
+          <h1 class="text-2xl font-extrabold tracking-tight">CSR Kesehatan PT Global Papua Abadi</h1>
+          <p class="mt-1 text-sm text-emerald-100">Sistem Informasi Laporan Pelayanan Kesehatan &amp; Rekam Medis Per-Kampung</p>
+        </div>
 
-        <!-- KONTROL DINAMIS: TANGGAL PELAKSANAAN & AREAL PELAYANAN -->
-        <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 no-print space-y-3">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-slate-100">
-                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-corp-700"></i> Filter Periode Pelaksanaan & Areal Kampung Pelayanan
-                </h3>
-                <span class="text-xs text-slate-500">Filter tanggal pelaksanaan dan lokasi pelayanan kesehatan</span>
+        <div class="card p-6">
+          <!-- Login -->
+          <form id="form-login" data-auth-view="login" class="space-y-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800">Masuk Petugas</h2>
+              <p class="text-xs text-slate-500">Hanya petugas yang terdaftar yang dapat mengakses data pasien.</p>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
-                <!-- Tanggal Mulai -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Mulai Pelaksanaan</label>
-                    <input type="date" id="filter-date-start" onchange="applyFilters()" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                </div>
-
-                <!-- Tanggal Selesai -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Selesai Pelaksanaan</label>
-                    <input type="date" id="filter-date-end" onchange="applyFilters()" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                </div>
-
-                <!-- Select / Filter Areal Kampung -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Areal Pelayanan / Kampung</label>
-                    <select id="filter-kampung" onchange="applyFilters()" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 bg-white focus:ring-2 focus:ring-corp-500 focus:outline-none font-medium text-slate-700">
-                        <option value="">Semua Areal Kampung</option>
-                        <!-- Dynamic options loaded via JS -->
-                    </select>
-                </div>
-
-                <!-- Quick Reset Filter Button -->
-                <div class="flex items-end gap-2">
-                    <button onclick="resetDateAndKampungFilter()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-1.5 px-3 rounded-xl transition border border-slate-300 text-xs flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-rotate"></i> Reset Filter
-                    </button>
-                </div>
+            <div>
+              <label class="label" for="login-email">Email</label>
+              <input id="login-email" name="email" type="email" required autocomplete="email" class="input" />
             </div>
+            <div>
+              <label class="label" for="login-password">Kata Sandi</label>
+              <input id="login-password" name="password" type="password" required autocomplete="current-password" class="input" />
+            </div>
+            <button type="submit" class="btn-primary w-full"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
+            <button type="button" data-auth-goto="forgot" class="w-full cursor-pointer text-center text-xs font-semibold text-corp-700 hover:underline">Lupa kata sandi?</button>
+          </form>
+
+          <!-- Lupa kata sandi -->
+          <form id="form-forgot" data-auth-view="forgot" hidden class="space-y-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800">Atur Ulang Kata Sandi</h2>
+              <p class="text-xs text-slate-500">Tautan untuk membuat kata sandi baru akan dikirim ke email Anda.</p>
+            </div>
+            <div>
+              <label class="label" for="forgot-email">Email</label>
+              <input id="forgot-email" name="email" type="email" required autocomplete="email" class="input" />
+            </div>
+            <button type="submit" class="btn-primary w-full"><i class="fa-solid fa-envelope"></i> Kirim Tautan</button>
+            <button type="button" data-auth-goto="login" class="w-full cursor-pointer text-center text-xs font-semibold text-corp-700 hover:underline">Kembali ke halaman masuk</button>
+          </form>
+
+          <!-- Atur kata sandi (undangan / pemulihan) -->
+          <form id="form-set-password" data-auth-view="set-password" hidden class="space-y-4">
+            <div>
+              <h2 id="set-password-title" class="text-lg font-bold text-slate-800">Buat Kata Sandi</h2>
+              <p class="text-xs text-slate-500">Minimal 8 karakter.</p>
+            </div>
+            <div>
+              <label class="label" for="new-password">Kata Sandi Baru</label>
+              <input id="new-password" name="password" type="password" minlength="8" required autocomplete="new-password" class="input" />
+            </div>
+            <button type="submit" class="btn-primary w-full"><i class="fa-solid fa-key"></i> Simpan Kata Sandi</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= APLIKASI UTAMA ================= -->
+    <div id="screen-app" hidden class="flex flex-1 flex-col">
+      <header class="no-print sticky top-0 z-40 border-b-2 border-emerald-500 bg-gradient-to-r from-corp-900 via-corp-800 to-slate-900 text-white shadow-xl">
+        <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-3 lg:flex-row sm:px-6 lg:px-8">
+          <div class="flex items-center gap-3.5">
+            <div class="flex items-center justify-center rounded-2xl border border-emerald-300 bg-white p-2.5 text-corp-800 shadow-md">
+              <i class="fa-solid fa-hand-holding-medical text-2xl"></i>
+            </div>
+            <div>
+              <span class="rounded-md border border-emerald-400/30 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold tracking-widest text-emerald-300 uppercase">Program Tanggung Jawab Sosial (CSR)</span>
+              <h1 class="text-lg font-extrabold tracking-tight sm:text-xl">CSR Kesehatan PT Global Papua Abadi</h1>
+              <p class="text-xs font-medium text-emerald-100">Sistem Informasi Laporan Pelayanan Kesehatan &amp; Rekam Medis Per-Kampung</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <button data-action="open-patient" class="btn-accent"><i class="fa-solid fa-plus-circle"></i> Pasien Baru</button>
+            <button data-action="open-upload" class="btn-ghost"><i class="fa-solid fa-file-arrow-up text-emerald-300"></i> Upload Data</button>
+            <button data-action="open-kampung" class="btn-ghost"><i class="fa-solid fa-map-location-dot text-emerald-300"></i> Kampung</button>
+            <button data-action="open-users" class="btn-ghost"><i class="fa-solid fa-users-gear text-emerald-300"></i> Pengguna</button>
+            <div class="flex items-center gap-2 border-l border-emerald-700 pl-3">
+              <span id="current-user" class="max-w-[160px] truncate text-xs text-emerald-100"></span>
+              <button data-action="logout" title="Keluar" class="icon-btn text-emerald-200 hover:bg-emerald-800 hover:text-white">
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Kop laporan (hanya saat dicetak) -->
+      <div class="print-only border-b-2 border-slate-800 p-6 text-center">
+        <h1 class="text-2xl font-bold uppercase">PT Global Papua Abadi</h1>
+        <h2 class="text-xl font-semibold text-emerald-800">Laporan Rekapitulasi Pelayanan Kesehatan CSR Masyarakat</h2>
+        <p id="print-info" class="mt-1 text-sm text-slate-600"></p>
+      </div>
+
+      <main class="mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+        <!-- Filter periode & kampung -->
+        <section class="card no-print space-y-3 p-4">
+          <div class="flex flex-col justify-between gap-1 border-b border-slate-100 pb-2 sm:flex-row sm:items-center">
+            <h3 class="flex items-center gap-2 text-sm font-bold text-slate-800">
+              <i class="fa-solid fa-sliders text-corp-700"></i> Filter Periode &amp; Areal Kampung Pelayanan
+            </h3>
+            <span class="text-xs text-slate-500">Filter berlaku untuk tabel, ringkasan, infografis, dan export</span>
+          </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <label class="label" for="filter-date-start">Tanggal Mulai</label>
+              <input type="date" id="filter-date-start" data-filter class="input py-1.5" />
+            </div>
+            <div>
+              <label class="label" for="filter-date-end">Tanggal Selesai</label>
+              <input type="date" id="filter-date-end" data-filter class="input py-1.5" />
+            </div>
+            <div>
+              <label class="label" for="filter-kampung">Areal Pelayanan / Kampung</label>
+              <select id="filter-kampung" data-filter class="input py-1.5"></select>
+            </div>
+            <div class="flex items-end">
+              <button data-action="reset-filters" class="btn-light w-full py-1.5 text-xs"><i class="fa-solid fa-rotate"></i> Reset Filter</button>
+            </div>
+          </div>
         </section>
 
-        <!-- RINGKASAN STATS CARDS -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Total Pasien -->
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Pasien Dilayani</p>
-                    <h3 id="kpi-total-pasien" class="text-3xl font-extrabold text-slate-800 mt-1">0</h3>
-                    <p class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-solid fa-heart-pulse"></i> Penerima Manfaat CSR</p>
-                </div>
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center text-xl shadow-inner">
-                    <i class="fa-solid fa-user-doctor"></i>
-                </div>
+        <!-- Ringkasan -->
+        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="card flex items-center justify-between p-5">
+            <div class="min-w-0">
+              <p class="text-xs font-bold tracking-wider text-slate-400 uppercase">Total Pasien Dilayani</p>
+              <h3 id="kpi-total" class="mt-1 text-3xl font-extrabold text-slate-800">0</h3>
+              <p class="mt-1 text-xs font-medium text-emerald-600"><i class="fa-solid fa-heart-pulse"></i> Penerima Manfaat CSR</p>
             </div>
-
-            <!-- Kampung Utama -->
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Kampung Terbanyak</p>
-                    <h3 id="kpi-top-kampung" class="text-xl font-bold text-slate-800 mt-1 truncate max-w-[150px]">-</h3>
-                    <p id="kpi-top-kampung-sub" class="text-xs text-slate-500 font-medium mt-1">0 Pasien</p>
-                </div>
-                <div class="w-12 h-12 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center text-xl shadow-inner">
-                    <i class="fa-solid fa-house-medical"></i>
-                </div>
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700"><i class="fa-solid fa-user-doctor"></i></div>
+          </div>
+          <div class="card flex items-center justify-between p-5">
+            <div class="min-w-0">
+              <p class="text-xs font-bold tracking-wider text-slate-400 uppercase">Kampung Terbanyak</p>
+              <h3 id="kpi-kampung" class="mt-1 truncate text-xl font-bold text-slate-800">-</h3>
+              <p id="kpi-kampung-sub" class="mt-1 text-xs font-medium text-slate-500">0 Pasien</p>
             </div>
-
-            <!-- Diagnosa Tertinggi -->
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Kasus Dominan</p>
-                    <h3 id="kpi-top-diagnosa" class="text-lg font-bold text-slate-800 mt-1 truncate max-w-[150px]">-</h3>
-                    <p id="kpi-top-diagnosa-sub" class="text-xs text-slate-500 font-medium mt-1">0 Kasus</p>
-                </div>
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl shadow-inner">
-                    <i class="fa-solid fa-stethoscope"></i>
-                </div>
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-xl text-sky-600"><i class="fa-solid fa-house-medical"></i></div>
+          </div>
+          <div class="card flex items-center justify-between p-5">
+            <div class="min-w-0">
+              <p class="text-xs font-bold tracking-wider text-slate-400 uppercase">Kasus Dominan</p>
+              <h3 id="kpi-diagnosa" class="mt-1 truncate text-lg font-bold text-slate-800">-</h3>
+              <p id="kpi-diagnosa-sub" class="mt-1 text-xs font-medium text-slate-500">0 Kasus</p>
             </div>
-
-            <!-- Rata-Rata Usia -->
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Demografi Usia</p>
-                    <h3 id="kpi-avg-age" class="text-3xl font-extrabold text-slate-800 mt-1">0 Thn</h3>
-                    <p id="kpi-gender-ratio" class="text-xs text-slate-500 font-medium mt-1">L: 0% | P: 0%</p>
-                </div>
-                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl shadow-inner">
-                    <i class="fa-solid fa-users"></i>
-                </div>
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-xl text-amber-600"><i class="fa-solid fa-stethoscope"></i></div>
+          </div>
+          <div class="card flex items-center justify-between p-5">
+            <div class="min-w-0">
+              <p class="text-xs font-bold tracking-wider text-slate-400 uppercase">Rata-rata Usia</p>
+              <h3 id="kpi-age" class="mt-1 text-3xl font-extrabold text-slate-800">0 Thn</h3>
+              <p id="kpi-gender" class="mt-1 text-xs font-medium text-slate-500">L: 0% | P: 0%</p>
             </div>
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-xl text-indigo-600"><i class="fa-solid fa-users"></i></div>
+          </div>
         </section>
 
-        <!-- TAB NAVIGATION -->
-        <div class="border-b border-slate-200 flex space-x-4 no-print">
-            <button id="btn-tab-laporan" onclick="switchTab('laporan')" class="pb-3 text-sm font-bold text-corp-800 border-b-2 border-corp-800 flex items-center gap-2">
-                <i class="fa-solid fa-table-list"></i> Laporan Pasien Per-Kampung
-            </button>
-            <button id="btn-tab-infografis" onclick="switchTab('infografis')" class="pb-3 text-sm font-bold text-slate-500 hover:text-corp-800 border-b-2 border-transparent flex items-center gap-2">
-                <i class="fa-solid fa-chart-pie"></i> Infografis Data Otomatis
-            </button>
-        </div>
+        <!-- Navigasi tab -->
+        <nav class="no-print flex gap-5 border-b border-slate-200">
+          <button data-tab="laporan" class="tab tab-active"><i class="fa-solid fa-table-list"></i> Laporan Pasien</button>
+          <button data-tab="infografis" class="tab"><i class="fa-solid fa-chart-pie"></i> Infografis</button>
+        </nav>
 
-        <!-- TAB 1: TABEL LAPORAN PASIEN -->
-        <div id="section-laporan" class="tab-section space-y-4">
-            
-            <!-- SEARCH & EXPORT BAR -->
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col lg:flex-row gap-3 justify-between items-stretch no-print">
-                <!-- Search Input -->
-                <div class="relative flex-1">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" id="filter-search" oninput="applyFilters()" placeholder="Cari Nama Pasien, Keluhan, Diagnosa, Obat..." class="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                </div>
-
-                <!-- Secondary Filters -->
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="filter-gender" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        <option value="">Semua Gender</option>
-                        <option value="L">Laki-laki (L)</option>
-                        <option value="P">Perempuan (P)</option>
-                    </select>
-
-                    <select id="filter-diagnosa" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        <option value="">Semua Diagnosa</option>
-                        <!-- Dynamic Options -->
-                    </select>
-                </div>
-
-                <!-- Export & Action Buttons -->
-                <div class="flex gap-2">
-                    <button onclick="exportToCSV()" title="Export Excel / CSV" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-xl text-sm flex items-center justify-center gap-1.5 transition">
-                        <i class="fa-solid fa-file-excel"></i> Export CSV
-                    </button>
-                    <button onclick="printReport()" title="Cetak Laporan PDF" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold px-3.5 py-2 rounded-xl text-sm flex items-center justify-center gap-1.5 transition">
-                        <i class="fa-solid fa-print"></i> Cetak PDF
-                    </button>
-                    <button onclick="confirmResetData()" title="Reset Data Sampel Awal" class="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 font-semibold px-3.5 py-2 rounded-xl text-sm flex items-center justify-center transition">
-                        <i class="fa-solid fa-rotate-right"></i>
-                    </button>
-                </div>
+        <!-- TAB: Laporan -->
+        <section id="tab-laporan" class="tab-section space-y-4">
+          <div class="card no-print flex flex-col items-stretch justify-between gap-3 p-4 lg:flex-row">
+            <div class="relative flex-1">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+              <input type="search" id="filter-search" data-filter placeholder="Cari nama, keluhan, diagnosa, obat…" class="input pl-9" />
             </div>
-
-            <!-- Tabel Data Pasien -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs md:text-sm">
-                        <thead>
-                            <tr class="bg-slate-800 text-white font-semibold">
-                                <th class="p-3">Tgl Pelaksanaan</th>
-                                <th class="p-3">Identitas Pasien</th>
-                                <th class="p-3">Areal / Kampung</th>
-                                <th class="p-3">Keluhan Utama</th>
-                                <th class="p-3">Tanda-Tanda Vital (TTV)</th>
-                                <th class="p-3">Diagnosa Medis</th>
-                                <th class="p-3">Obat / Terapi Diberikan</th>
-                                <th class="p-3 text-center no-print">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="patient-table-body" class="divide-y divide-slate-200">
-                            <!-- Rows dynamic via JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Empty State -->
-                <div id="empty-state" class="hidden py-12 text-center">
-                    <i class="fa-solid fa-notes-medical text-5xl text-slate-300 mb-3"></i>
-                    <p class="text-slate-500 font-medium">Tidak ada data rekam medis pasien yang sesuai dengan filter.</p>
-                </div>
-
-                <!-- Footer & Pagination -->
-                <div class="p-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-2 no-print">
-                    <span id="showing-text">Menampilkan 0 data</span>
-                    <div class="flex gap-1" id="pagination-controls">
-                        <!-- Dynamic pagination -->
-                    </div>
-                </div>
+            <div class="grid grid-cols-2 gap-2">
+              <select id="filter-gender" data-filter class="input">
+                <option value="">Semua Gender</option>
+                <option value="L">Laki-laki (L)</option>
+                <option value="P">Perempuan (P)</option>
+              </select>
+              <select id="filter-diagnosa" data-filter class="input"></select>
             </div>
-        </div>
-
-        <!-- TAB 2: INFOGRAFIS & VISUALISASI DATA OTOMATIS -->
-        <div id="section-infografis" class="tab-section hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                <!-- Grafik 1: Pasien per Areal Kampung -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-chart-column text-emerald-600"></i> Pasien Berdasarkan Areal Kampung Pelayanan
-                        </h4>
-                        <span class="text-xs text-slate-400">Total Pasien</span>
-                    </div>
-                    <div class="relative h-64">
-                        <canvas id="chartKampung"></canvas>
-                    </div>
-                </div>
-
-                <!-- Grafik 2: Top Diagnosa -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-chart-pie text-amber-500"></i> Top 10 Diagnosa / Penyakit Dominan
-                        </h4>
-                        <span class="text-xs text-slate-400">Proporsi Kasus</span>
-                    </div>
-                    <div class="relative h-64 flex justify-center">
-                        <canvas id="chartDiagnosa"></canvas>
-                    </div>
-                </div>
-
-                <!-- Grafik 3: Demografi Usia & Gender -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-chart-bar text-sky-600"></i> Demografi Pasien (Kelompok Usia & Gender)
-                        </h4>
-                        <span class="text-xs text-slate-400">Balita s/d Lansia</span>
-                    </div>
-                    <div class="relative h-64">
-                        <canvas id="chartDemografi"></canvas>
-                    </div>
-                </div>
-
-                <!-- Grafik 4: Tren Kunjungan Harian -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-chart-line text-emerald-600"></i> Tren Pelayanan Kesehatan Harian
-                        </h4>
-                        <span class="text-xs text-slate-400">Periode Aktif</span>
-                    </div>
-                    <div class="relative h-64">
-                        <canvas id="chartTren"></canvas>
-                    </div>
-                </div>
-
+            <div class="flex flex-wrap gap-2">
+              <button data-action="export-xlsx" class="btn bg-emerald-600 text-white hover:bg-emerald-700"><i class="fa-solid fa-file-excel"></i> Excel</button>
+              <button data-action="export-csv" class="btn-light"><i class="fa-solid fa-file-csv"></i> CSV</button>
+              <button data-action="print" class="btn-dark"><i class="fa-solid fa-print"></i> Cetak</button>
             </div>
-        </div>
+          </div>
 
-    </main>
-
-    <!-- FOOTER BRANDING -->
-    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-6 mt-12 no-print">
-        <div class="max-w-7xl mx-auto px-4 text-center space-y-2 text-xs">
-            <p class="font-bold text-slate-200 text-sm">PT GLOBAL PAPUA ABADI - CORPORATE SOCIAL RESPONSIBILITY (CSR)</p>
-            <p>Mewujudkan pelayanan kesehatan masyarakat berkelanjutan, holistik, dan merata untuk areal pelayanan kampung sekitar.</p>
-            <p class="text-slate-500 pt-2">© 2026 CSR KESEHATAN PT Global Papua Abadi. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <!-- MODAL 1: FORM REKAM MEDIS PATIENT (TAMBAH / EDIT) -->
-    <div id="patient-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
-        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
-            <!-- Modal Header -->
-            <div class="bg-gradient-to-r from-corp-900 to-corp-800 text-white px-6 py-4 flex justify-between items-center">
-                <h3 id="modal-title" class="font-bold text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus"></i> Tambah Rekam Medis Pasien CSR Baru
-                </h3>
-                <button onclick="closeModal()" class="text-white/80 hover:text-white text-xl">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+          <!-- Bar aksi untuk data terpilih -->
+          <div id="bulk-bar" hidden class="no-print flex items-center justify-between rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm">
+            <span><strong id="bulk-count">0</strong> data dipilih</span>
+            <div class="flex gap-2">
+              <button data-action="clear-selection" class="btn-light py-1 text-xs">Batal</button>
+              <button data-action="bulk-delete" class="btn py-1 text-xs bg-rose-600 text-white hover:bg-rose-700"><i class="fa-solid fa-trash-can"></i> Hapus Terpilih</button>
             </div>
+          </div>
 
-            <!-- Modal Form Body -->
-            <form id="patient-form" onsubmit="handleFormSubmit(event)" class="p-6 overflow-y-auto space-y-4 text-sm">
-                <input type="hidden" id="patient-id">
+          <div class="card overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse text-left text-xs md:text-sm">
+                <thead>
+                  <tr class="bg-slate-800 font-semibold text-white">
+                    <th class="no-print w-8 p-3"><input type="checkbox" id="select-all" title="Pilih semua di halaman ini" class="cursor-pointer" /></th>
+                    <th class="p-3">Tanggal</th>
+                    <th class="p-3">Identitas Pasien</th>
+                    <th class="p-3">Kampung</th>
+                    <th class="p-3">Keluhan Utama</th>
+                    <th class="p-3">TTV</th>
+                    <th class="p-3">Diagnosa</th>
+                    <th class="p-3">Obat / Terapi</th>
+                    <th class="no-print p-3 text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="patient-tbody" class="divide-y divide-slate-200"></tbody>
+              </table>
+            </div>
+            <div id="empty-state" hidden class="py-12 text-center">
+              <i class="fa-solid fa-notes-medical mb-3 text-5xl text-slate-300"></i>
+              <p id="empty-text" class="font-medium text-slate-500">Belum ada data pasien.</p>
+            </div>
+            <div class="no-print flex flex-col items-center justify-between gap-2 border-t border-slate-200 bg-slate-50 p-3 text-xs text-slate-500 sm:flex-row">
+              <span id="showing-text">Menampilkan 0 data</span>
+              <div id="pagination" class="flex flex-wrap gap-1"></div>
+            </div>
+          </div>
+        </section>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Tanggal Pelayanan -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Tanggal Pelaksanaan Pelayanan *</label>
-                        <input type="date" id="form-tanggal" required class="w-full border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                    </div>
+        <!-- TAB: Infografis -->
+        <section id="tab-infografis" hidden class="tab-section">
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div class="card p-5">
+              <h4 class="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800"><i class="fa-solid fa-chart-column text-emerald-600"></i> Pasien per Areal Kampung</h4>
+              <div class="relative h-64"><canvas id="chart-kampung"></canvas></div>
+            </div>
+            <div class="card p-5">
+              <h4 class="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800"><i class="fa-solid fa-chart-bar text-amber-500"></i> 10 Diagnosa Terbanyak</h4>
+              <div class="relative h-64"><canvas id="chart-diagnosa"></canvas></div>
+            </div>
+            <div class="card p-5">
+              <h4 class="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800"><i class="fa-solid fa-people-group text-sky-600"></i> Demografi Usia &amp; Gender</h4>
+              <div class="relative h-64"><canvas id="chart-demografi"></canvas></div>
+            </div>
+            <div class="card p-5">
+              <h4 class="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800"><i class="fa-solid fa-chart-line text-emerald-600"></i> Tren Pelayanan Harian</h4>
+              <div class="relative h-64"><canvas id="chart-tren"></canvas></div>
+            </div>
+          </div>
+        </section>
+      </main>
 
-                    <!-- Areal Kampung -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Areal / Kampung Pelayanan *</label>
-                        <div class="flex gap-2">
-                            <select id="form-kampung" required class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                                <!-- Dynamic Options -->
-                            </select>
-                            <button type="button" onclick="openKampungModal()" title="Kelola Daftar Kampung" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap">
-                                <i class="fa-solid fa-gear"></i> Kelola
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Nama Pasien -->
-                    <div class="sm:col-span-1">
-                        <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap Pasien *</label>
-                        <input type="text" id="form-nama" required placeholder="Contoh: Petrus Ndiken" class="w-full border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                    </div>
-
-                    <!-- Umur -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Umur (Tahun) *</label>
-                        <input type="number" id="form-umur" min="0" max="120" required placeholder="Tahun" class="w-full border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                    </div>
-
-                    <!-- Jenis Kelamin -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Jenis Kelamin *</label>
-                        <select id="form-gender" required class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                            <option value="L">Laki-laki (L)</option>
-                            <option value="P">Perempuan (P)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Keluhan Utama -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Keluhan Utama Pasien *</label>
-                    <textarea id="form-keluhan" rows="2" required placeholder="Contoh: Demam menggigil sejak 2 hari, pusing, lemas..." class="w-full border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-corp-500 focus:outline-none"></textarea>
-                </div>
-
-                <!-- TTV Section -->
-                <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 space-y-3">
-                    <h4 class="font-bold text-corp-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-heart-pulse text-rose-500"></i> Tanda-Tanda Vital (TTV) Pasien
-                    </h4>
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">TD (mmHg)</label>
-                            <input type="text" id="form-td" placeholder="120/80" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nadi (x/mnt)</label>
-                            <input type="number" id="form-nadi" placeholder="80" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">RR (x/mnt)</label>
-                            <input type="number" id="form-rr" placeholder="20" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Suhu (°C)</label>
-                            <input type="number" step="0.1" id="form-suhu" placeholder="36.5" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">SpO2 (%)</label>
-                            <input type="number" id="form-spo2" placeholder="98" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Diagnosa Medis -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Diagnosa Medis *</label>
-                        <input type="text" id="form-diagnosa" required placeholder="Contoh: Malaria Tropika (B50)" class="w-full border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                    </div>
-
-                    <!-- Obat / Terapi -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Obat & Terapi Diberikan *</label>
-                        <input type="text" id="form-obat" required placeholder="Contoh: DHP 3x3 tab, Paracetamol 3x500mg" class="w-full border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                    </div>
-                </div>
-
-                <!-- Footer Buttons -->
-                <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-300 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-corp-800 hover:bg-corp-900 text-white font-bold rounded-xl shadow transition flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Rekam Medis
-                    </button>
-                </div>
-            </form>
+      <footer class="no-print mt-12 border-t border-slate-800 bg-slate-900 py-6 text-slate-400">
+        <div class="mx-auto max-w-7xl space-y-2 px-4 text-center text-xs">
+          <p class="text-sm font-bold text-slate-200">PT Global Papua Abadi – Corporate Social Responsibility (CSR)</p>
+          <p>Mewujudkan pelayanan kesehatan masyarakat yang berkelanjutan, holistik, dan merata untuk areal pelayanan kampung sekitar.</p>
+          <p class="pt-2 text-slate-500">© <span id="year"></span> CSR Kesehatan PT Global Papua Abadi</p>
         </div>
+      </footer>
     </div>
 
-    <!-- MODAL 2: MANAJEMEN KAMPUNG -->
-    <div id="kampung-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
-            <!-- Header -->
-            <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center border-b border-slate-700">
-                <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-map-location-dot text-emerald-400"></i> Kelola Areal Pelayanan / Kampung
-                </h3>
-                <button onclick="closeKampungModal()" class="text-slate-400 hover:text-white text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div class="p-6 overflow-y-auto space-y-5 text-sm">
-                
-                <!-- Form Tambah / Edit Kampung -->
-                <div class="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200 space-y-3">
-                    <h4 id="kampung-form-title" class="font-bold text-corp-900 text-xs uppercase tracking-wider">Tambah Kampung Baru</h4>
-                    <form onsubmit="handleKampungSubmit(event)" class="flex gap-2">
-                        <input type="hidden" id="edit-kampung-old-name">
-                        <input type="text" id="input-nama-kampung" required placeholder="Contoh: Kampung Tambat" class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-corp-500 focus:outline-none">
-                        <button type="submit" id="btn-submit-kampung" class="bg-corp-800 hover:bg-corp-900 text-white font-bold px-4 py-2 rounded-xl transition text-xs flex items-center gap-1.5 whitespace-nowrap">
-                            <i class="fa-solid fa-plus"></i> Tambah
-                        </button>
-                        <button type="button" id="btn-cancel-edit-kampung" onclick="resetKampungForm()" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-2 rounded-xl transition text-xs">
-                            Batal
-                        </button>
-                    </form>
-                </div>
-
-                <!-- List Kampung Aktif -->
-                <div>
-                    <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider mb-2">Daftar Kampung Pelayanan Aktif (<span id="count-kampung-list">0</span>)</h4>
-                    <div id="kampung-list-container" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                        <!-- Dynamic via JS -->
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Footer -->
-            <div class="p-4 bg-slate-50 border-t border-slate-200 text-right">
-                <button onclick="closeKampungModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition">
-                    Selesai & Tutup
-                </button>
-            </div>
+    <!-- ================= MODAL: FORM PASIEN ================= -->
+    <div id="modal-patient" hidden class="modal no-print">
+      <div class="modal-panel max-w-2xl">
+        <div class="modal-header">
+          <h3 id="patient-modal-title" class="flex items-center gap-2 text-lg font-bold"></h3>
+          <button data-close class="cursor-pointer text-xl text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
         </div>
+        <form id="form-patient" class="space-y-4 overflow-y-auto p-6 text-sm">
+          <input type="hidden" name="id" />
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label class="label">Tanggal Pelaksanaan *</label>
+              <input type="date" name="tanggal" required class="input" />
+            </div>
+            <div>
+              <label class="label">Areal / Kampung *</label>
+              <div class="flex gap-2">
+                <select name="kampung" id="patient-kampung" required class="input"></select>
+                <button type="button" data-action="open-kampung" title="Kelola daftar kampung" class="btn bg-emerald-100 text-xs text-emerald-800 hover:bg-emerald-200"><i class="fa-solid fa-gear"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <label class="label">Nama Lengkap *</label>
+              <input type="text" name="nama" required placeholder="Contoh: Petrus Ndiken" class="input" />
+            </div>
+            <div>
+              <label class="label">Umur (Tahun) *</label>
+              <input type="number" name="umur" min="0" max="120" required class="input" />
+            </div>
+            <div>
+              <label class="label">Jenis Kelamin *</label>
+              <select name="gender" required class="input">
+                <option value="L">Laki-laki (L)</option>
+                <option value="P">Perempuan (P)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="label">Keluhan Utama</label>
+            <textarea name="keluhan" rows="2" placeholder="Contoh: Demam menggigil sejak 2 hari, pusing, lemas…" class="input"></textarea>
+          </div>
+          <fieldset class="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4">
+            <legend class="px-1 text-xs font-bold tracking-wider text-corp-900 uppercase"><i class="fa-solid fa-heart-pulse text-rose-500"></i> Tanda-Tanda Vital (TTV)</legend>
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-5">
+              <div><label class="label">TD (mmHg)</label><input type="text" name="td" placeholder="120/80" class="input py-1.5 text-xs" /></div>
+              <div><label class="label">Nadi (x/mnt)</label><input type="number" name="nadi" min="0" max="300" placeholder="80" class="input py-1.5 text-xs" /></div>
+              <div><label class="label">RR (x/mnt)</label><input type="number" name="rr" min="0" max="100" placeholder="20" class="input py-1.5 text-xs" /></div>
+              <div><label class="label">Suhu (°C)</label><input type="number" name="suhu" step="0.1" min="30" max="45" placeholder="36.5" class="input py-1.5 text-xs" /></div>
+              <div class="col-span-2 sm:col-span-1"><label class="label">SpO2 (%)</label><input type="number" name="spo2" min="0" max="100" placeholder="98" class="input py-1.5 text-xs" /></div>
+            </div>
+          </fieldset>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label class="label">Diagnosa Medis *</label>
+              <input type="text" name="diagnosa" list="diagnosa-options" required placeholder="Contoh: Malaria Tropika (B50)" class="input" />
+              <datalist id="diagnosa-options"></datalist>
+            </div>
+            <div>
+              <label class="label">Obat &amp; Terapi</label>
+              <input type="text" name="obat" placeholder="Contoh: DHP 3x3 tab, Paracetamol 3x500mg" class="input" />
+            </div>
+          </div>
+          <div class="flex justify-end gap-3 border-t border-slate-200 pt-4">
+            <button type="button" data-close class="btn-light">Batal</button>
+            <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // DEFAULT 5 KAMPUNG
-        const defaultKampungList = [
-            "Kampung Tambat",
-            "Kampung Ngguti Bob",
-            "Kampung Semayam Indah",
-            "Kampung Bersehati",
-            "Kampung Serkambu (SOA)"
-        ];
-
-        let kampungList = [];
-
-        // INITIAL REALISTIC DATA PATIENTS (1 BULAN AKTIF OKTOBER 2026)
-        const initialPatients = [
-            { id: "GPA-001", tanggal: "2026-10-01", nama: "Yohanes Gebze", umur: 34, gender: "L", kampung: "Kampung Tambat", keluhan: "Demam menggigil sejak 3 hari, badan pegal linu", td: "110/70", nadi: 88, rr: 20, suhu: 38.5, spo2: 98, diagnosa: "Malaria Tropika (B50)", obat: "DHP 3x3 tab, Paracetamol 3x500mg" },
-            { id: "GPA-002", tanggal: "2026-10-02", nama: "Maria Mahuze", umur: 28, gender: "P", kampung: "Kampung Ngguti Bob", keluhan: "Batuk berdahak, tenggorokan gatal", td: "120/80", nadi: 80, rr: 18, suhu: 37.1, spo2: 99, diagnosa: "ISPA (J06.9)", obat: "Amoxicillin 3x500mg, GG 3x100mg" },
-            { id: "GPA-003", tanggal: "2026-10-03", nama: "Petrus Ndiken", umur: 45, gender: "L", kampung: "Kampung Semayam Indah", keluhan: "Nyeri ulu hati, mual dan perih perut", td: "130/85", nadi: 84, rr: 19, suhu: 36.6, spo2: 98, diagnosa: "Gastritis (K29.7)", obat: "Antasida 3x1 chew, Omeprazole 2x20mg" },
-            { id: "GPA-004", tanggal: "2026-10-05", nama: "Katarina Balagaize", umur: 52, gender: "P", kampung: "Kampung Bersehati", keluhan: "Pusing berputar, leher kaku", td: "160/100", nadi: 90, rr: 20, suhu: 36.5, spo2: 97, diagnosa: "Hipertensi (I10)", obat: "Amlodipine 1x10mg" },
-            { id: "GPA-005", tanggal: "2026-10-06", nama: "Lukas Kaize", umur: 8, gender: "L", kampung: "Kampung Serkambu (SOA)", keluhan: "Gatal-gatal pada tangan dan kaki", td: "100/60", nadi: 95, rr: 22, suhu: 36.8, spo2: 99, diagnosa: "Dermatitis / Alergi (L30.9)", obat: "CTM 3x2mg, Salep Hydrocortisone" },
-            { id: "GPA-006", tanggal: "2026-10-08", nama: "Ester Samkakai", umur: 24, gender: "P", kampung: "Kampung Tambat", keluhan: "BAB cair >4x sehari, perut mulas", td: "110/70", nadi: 86, rr: 18, suhu: 37.0, spo2: 98, diagnosa: "Diare Akut (A09)", obat: "Oralit 5 sachet, Zinc 1x20mg" },
-            { id: "GPA-007", tanggal: "2026-10-10", nama: "Markus Basik-Basik", umur: 60, gender: "L", kampung: "Kampung Ngguti Bob", keluhan: "Sering kencing malam hari, cepat haus", td: "135/80", nadi: 78, rr: 18, suhu: 36.4, spo2: 97, diagnosa: "Diabetes Mellitus T2 (E11)", obat: "Glibenclamide 1x5mg, Metformin 2x500mg" },
-            { id: "GPA-008", tanggal: "2026-10-12", nama: "Agustina Muyak", umur: 31, gender: "P", kampung: "Kampung Semayam Indah", keluhan: "Demam sumeng, lemas, pusing berkepanjangan", td: "105/65", nadi: 82, rr: 20, suhu: 38.0, spo2: 98, diagnosa: "Malaria Vivax (B51)", obat: "DHP 3x3 tab, Primaquin 1x1 tab" },
-            { id: "GPA-009", tanggal: "2026-10-14", nama: "Dominikus Gebze", umur: 19, gender: "L", kampung: "Kampung Bersehati", keluhan: "Luka lecet di kaki akibat kerja lapangan", td: "120/75", nadi: 80, rr: 18, suhu: 36.6, spo2: 99, diagnosa: "Vulnus Excoriatum (T14.1)", obat: "Rawat luka, Amoxicillin 3x500mg" },
-            { id: "GPA-010", tanggal: "2026-10-15", nama: "Veronika Mahuze", umur: 4, gender: "P", kampung: "Kampung Serkambu (SOA)", keluhan: "Demam, batuk pilek, lemas tidak nafsu makan", td: "95/60", nadi: 105, rr: 24, suhu: 38.2, spo2: 98, diagnosa: "ISPA pada Balita (J06)", obat: "Paracetamol syr 3x1 cth, Ambroxol syr" },
-            { id: "GPA-011", tanggal: "2026-10-18", nama: "Bartelemeus Ndiken", umur: 38, gender: "L", kampung: "Kampung Tambat", keluhan: "Nyeri sendi lutut kanan", td: "125/80", nadi: 82, rr: 18, suhu: 36.5, spo2: 99, diagnosa: "Osteoarthritis / Nyeri Sendi (M19)", obat: "Meloxicam 2x7.5mg, B Comp 2x1" },
-            { id: "GPA-012", tanggal: "2026-10-20", nama: "Elisabeth Kaize", umur: 27, gender: "P", kampung: "Kampung Ngguti Bob", keluhan: "Mual muntah, terlambat haid 2 bulan", td: "110/70", nadi: 80, rr: 18, suhu: 36.6, spo2: 99, diagnosa: "Emesis Gravidarum (O21.0)", obat: "Vitamin B6 2x1, SF 1x1" },
-            { id: "GPA-013", tanggal: "2026-10-22", nama: "Gabriel Ndiken", umur: 29, gender: "L", kampung: "Kampung Semayam Indah", keluhan: "Demam tinggi mendadak, menggigil malam", td: "115/75", nadi: 92, rr: 20, suhu: 38.8, spo2: 97, diagnosa: "Malaria Tropika (B50)", obat: "DHP 3x3 tab, Paracetamol 3x500mg" },
-            { id: "GPA-014", tanggal: "2026-10-24", nama: "Anastasia Kaize", umur: 63, gender: "P", kampung: "Kampung Bersehati", keluhan: "Tenggorokan kering, pusing, TD tinggi", td: "170/100", nadi: 86, rr: 20, suhu: 36.5, spo2: 96, diagnosa: "Hipertensi (I10)", obat: "Amlodipine 1x10mg, Captopril 2x25mg" },
-            { id: "GPA-015", tanggal: "2026-10-25", nama: "Joseph Kaize", umur: 10, gender: "L", kampung: "Kampung Serkambu (SOA)", keluhan: "Batuk pilek, demam", td: "100/65", nadi: 90, rr: 20, suhu: 37.8, spo2: 99, diagnosa: "ISPA (J06.9)", obat: "Ambroxol 3x15mg, Paracetamol 3x250mg" }
-        ];
-
-        // STATE APP
-        let patients = [];
-        let filteredPatients = [];
-        let currentPage = 1;
-        const pageSize = 8;
-        let chartInstances = {};
-
-        // INITIALIZATION ON LOAD
-        window.addEventListener('DOMContentLoaded', () => {
-            loadPatientsAndKampungData();
-            populateKampungDropdowns();
-            populateDiagnosaDropdown();
-            applyFilters();
-            initCharts();
-            
-            document.getElementById('form-tanggal').value = new Date().toISOString().split('T')[0];
-        });
-
-        // LOCAL STORAGE LOAD & SAVE
-        function loadPatientsAndKampungData() {
-            const storedPatients = localStorage.getItem('gpa_csr_patients_data_v3');
-            const storedKampung = localStorage.getItem('gpa_csr_kampung_list_v3');
-
-            if (storedKampung) {
-                try { kampungList = JSON.parse(storedKampung); } 
-                catch(e) { kampungList = [...defaultKampungList]; }
-            } else {
-                kampungList = [...defaultKampungList];
-            }
-
-            if (storedPatients) {
-                try { patients = JSON.parse(storedPatients); } 
-                catch(e) { patients = [...initialPatients]; }
-            } else {
-                patients = [...initialPatients];
-                saveAllData();
-            }
-        }
-
-        function saveAllData() {
-            localStorage.setItem('gpa_csr_patients_data_v3', JSON.stringify(patients));
-            localStorage.setItem('gpa_csr_kampung_list_v3', JSON.stringify(kampungList));
-        }
-
-        function confirmResetData() {
-            Swal.fire({
-                title: 'Reset ke Data Sampel?',
-                text: "Semua data pasien dan daftar kampung akan dikembalikan ke data awal sampel CSR PT GPA.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#166534',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Ya, Reset Data!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    patients = [...initialPatients];
-                    kampungList = [...defaultKampungList];
-                    saveAllData();
-                    populateKampungDropdowns();
-                    populateDiagnosaDropdown();
-                    applyFilters();
-                    Swal.fire('Berhasil!', 'Data sampel awal berhasil dimuat kembali.', 'success');
-                }
-            });
-        }
-
-        // POPULATE DROPDOWNS
-        function populateKampungDropdowns() {
-            const filterSelect = document.getElementById('filter-kampung');
-            const formSelect = document.getElementById('form-kampung');
-
-            const currentFilterVal = filterSelect.value;
-            const currentFormVal = formSelect.value;
-
-            filterSelect.innerHTML = '<option value="">Semua Areal Kampung</option>';
-            formSelect.innerHTML = '';
-
-            kampungList.sort().forEach(k => {
-                const opt1 = document.createElement('option');
-                opt1.value = k;
-                opt1.textContent = k;
-                filterSelect.appendChild(opt1);
-
-                const opt2 = document.createElement('option');
-                opt2.value = k;
-                opt2.textContent = k;
-                formSelect.appendChild(opt2);
-            });
-
-            if (kampungList.includes(currentFilterVal)) filterSelect.value = currentFilterVal;
-            if (kampungList.includes(currentFormVal)) formSelect.value = currentFormVal;
-        }
-
-        function populateDiagnosaDropdown() {
-            const select = document.getElementById('filter-diagnosa');
-            const unique = [...new Set(patients.map(p => p.diagnosa))].sort();
-            select.innerHTML = '<option value="">Semua Diagnosa</option>';
-            unique.forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d;
-                opt.textContent = d;
-                select.appendChild(opt);
-            });
-        }
-
-        // KAMPUNG MANAGEMENT MODAL & LOGIC
-        function openKampungModal() {
-            renderKampungListModal();
-            resetKampungForm();
-            document.getElementById('kampung-modal').classList.remove('hidden');
-        }
-
-        function closeKampungModal() {
-            document.getElementById('kampung-modal').classList.add('hidden');
-        }
-
-        function renderKampungListModal() {
-            const container = document.getElementById('kampung-list-container');
-            const countElem = document.getElementById('count-kampung-list');
-            container.innerHTML = '';
-
-            countElem.textContent = kampungList.length;
-
-            if (kampungList.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 italic text-xs py-2">Belum ada kampung terdaftar.</p>';
-                return;
-            }
-
-            kampungList.sort().forEach(k => {
-                const patientCount = patients.filter(p => p.kampung === k).length;
-
-                const div = document.createElement('div');
-                div.className = "flex items-center justify-between bg-slate-50 hover:bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-xs transition";
-                div.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-location-dot text-emerald-600"></i>
-                        <span class="font-bold text-slate-800">${escapeHtml(k)}</span>
-                        <span class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-medium">${patientCount} pas</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="editKampung('${escapeHtml(k)}')" title="Edit Nama Kampung" class="p-1.5 text-sky-600 hover:bg-sky-100 rounded-lg transition">
-                            <i class="fa-solid fa-pen text-xs"></i>
-                        </button>
-                        <button onclick="deleteKampung('${escapeHtml(k)}')" title="Hapus Kampung" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg transition">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function handleKampungSubmit(e) {
-            e.preventDefault();
-            const inputVal = document.getElementById('input-nama-kampung').value.trim();
-            const oldName = document.getElementById('edit-kampung-old-name').value;
-
-            if (!inputVal) return;
-
-            const formattedName = inputVal.toLowerCase().startsWith("kampung ") ? inputVal : "Kampung " + inputVal;
-
-            if (oldName) {
-                const index = kampungList.indexOf(oldName);
-                if (index !== -1) {
-                    kampungList[index] = formattedName;
-                    patients.forEach(p => {
-                        if (p.kampung === oldName) p.kampung = formattedName;
-                    });
-                    Swal.fire({ icon: 'success', title: 'Berhasil', text: `Areal kampung diubah menjadi "${formattedName}"`, timer: 1500, showConfirmButton: false });
-                }
-            } else {
-                if (kampungList.some(k => k.toLowerCase() === formattedName.toLowerCase())) {
-                    Swal.fire({ icon: 'warning', title: 'Peringatan', text: `Kampung "${formattedName}" sudah ada!` });
-                    return;
-                }
-                kampungList.push(formattedName);
-                Swal.fire({ icon: 'success', title: 'Ditambahkan', text: `Kampung "${formattedName}" berhasil ditambahkan!`, timer: 1500, showConfirmButton: false });
-            }
-
-            saveAllData();
-            populateKampungDropdowns();
-            renderKampungListModal();
-            resetKampungForm();
-            applyFilters();
-        }
-
-        function editKampung(nama) {
-            document.getElementById('kampung-form-title').textContent = `Edit Nama Kampung: ${nama}`;
-            document.getElementById('edit-kampung-old-name').value = nama;
-            document.getElementById('input-nama-kampung').value = nama;
-
-            const btnSubmit = document.getElementById('btn-submit-kampung');
-            btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Simpan';
-            document.getElementById('btn-cancel-edit-kampung').classList.remove('hidden');
-        }
-
-        function resetKampungForm() {
-            document.getElementById('kampung-form-title').textContent = "Tambah Kampung Baru";
-            document.getElementById('edit-kampung-old-name').value = "";
-            document.getElementById('input-nama-kampung').value = "";
-
-            const btnSubmit = document.getElementById('btn-submit-kampung');
-            btnSubmit.innerHTML = '<i class="fa-solid fa-plus"></i> Tambah';
-            document.getElementById('btn-cancel-edit-kampung').classList.add('hidden');
-        }
-
-        function deleteKampung(nama) {
-            const count = patients.filter(p => p.kampung === nama).length;
-            let warnMsg = `Hapus "${nama}" dari daftar areal kampung?`;
-            if (count > 0) warnMsg = `Ada ${count} rekam medis pasien di "${nama}". Menghapus kampung ini akan mempertahankan data pasien namun menghapus kampung dari master daftar.`;
-
-            Swal.fire({
-                title: 'Hapus Kampung?',
-                text: warnMsg,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Ya, Hapus!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    kampungList = kampungList.filter(k => k !== nama);
-                    saveAllData();
-                    populateKampungDropdowns();
-                    renderKampungListModal();
-                    applyFilters();
-                    Swal.fire('Terhapus!', `Kampung "${nama}" telah dihapus.`, 'success');
-                }
-            });
-        }
-
-        // TAB SWITCHING
-        function switchTab(tab) {
-            const btnLaporan = document.getElementById('btn-tab-laporan');
-            const btnInfografis = document.getElementById('btn-tab-infografis');
-            const secLaporan = document.getElementById('section-laporan');
-            const secInfografis = document.getElementById('section-infografis');
-
-            if (tab === 'laporan') {
-                secLaporan.classList.remove('hidden');
-                secInfografis.classList.add('hidden');
-                btnLaporan.className = "pb-3 text-sm font-bold text-corp-800 border-b-2 border-corp-800 flex items-center gap-2";
-                btnInfografis.className = "pb-3 text-sm font-bold text-slate-500 hover:text-corp-800 border-b-2 border-transparent flex items-center gap-2";
-            } else {
-                secLaporan.classList.add('hidden');
-                secInfografis.classList.remove('hidden');
-                btnInfografis.className = "pb-3 text-sm font-bold text-corp-800 border-b-2 border-corp-800 flex items-center gap-2";
-                btnLaporan.className = "pb-3 text-sm font-bold text-slate-500 hover:text-corp-800 border-b-2 border-transparent flex items-center gap-2";
-                updateCharts();
-            }
-        }
-
-        // FILTER LOGIC
-        function applyFilters() {
-            const startDate = document.getElementById('filter-date-start').value;
-            const endDate = document.getElementById('filter-date-end').value;
-            const kampungVal = document.getElementById('filter-kampung').value;
-            const searchVal = document.getElementById('filter-search').value.toLowerCase().trim();
-            const genderVal = document.getElementById('filter-gender').value;
-            const diagnosaVal = document.getElementById('filter-diagnosa').value;
-
-            filteredPatients = patients.filter(p => {
-                const pDate = p.tanggal;
-                const matchesStart = !startDate || pDate >= startDate;
-                const matchesEnd = !endDate || pDate <= endDate;
-                const matchesKampung = !kampungVal || p.kampung === kampungVal;
-                const matchesGender = !genderVal || p.gender === genderVal;
-                const matchesDiagnosa = !diagnosaVal || p.diagnosa === diagnosaVal;
-
-                const matchesSearch = !searchVal ||
-                    p.nama.toLowerCase().includes(searchVal) ||
-                    p.id.toLowerCase().includes(searchVal) ||
-                    p.kampung.toLowerCase().includes(searchVal) ||
-                    p.keluhan.toLowerCase().includes(searchVal) ||
-                    p.diagnosa.toLowerCase().includes(searchVal) ||
-                    p.obat.toLowerCase().includes(searchVal);
-
-                return matchesStart && matchesEnd && matchesKampung && matchesGender && matchesDiagnosa && matchesSearch;
-            });
-
-            filteredPatients.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-
-            currentPage = 1;
-            renderTable();
-            updateKPIs();
-            updateCharts();
-            updatePrintPeriodeText(startDate, endDate, kampungVal);
-        }
-
-        function resetDateAndKampungFilter() {
-            document.getElementById('filter-date-start').value = '';
-            document.getElementById('filter-date-end').value = '';
-            document.getElementById('filter-kampung').value = '';
-            document.getElementById('filter-search').value = '';
-            document.getElementById('filter-gender').value = '';
-            document.getElementById('filter-diagnosa').value = '';
-            applyFilters();
-        }
-
-        function updatePrintPeriodeText(start, end, kampung) {
-            const printInfo = document.getElementById('print-periode-info');
-            let text = "Laporan Rekapitulasi Pelayanan Kesehatan CSR PT Global Papua Abadi";
-            if (start || end) text += ` | Periode: ${start || 'Awal'} s/d ${end || 'Sekarang'}`;
-            if (kampung) text += ` | Areal Pelayanan: ${kampung}`;
-            else text += ` | Seluruh Areal Kampung Pelayanan`;
-            printInfo.textContent = text;
-        }
-
-        // RENDER TABLE
-        function renderTable() {
-            const tbody = document.getElementById('patient-table-body');
-            const emptyState = document.getElementById('empty-state');
-            tbody.innerHTML = '';
-
-            if (filteredPatients.length === 0) {
-                emptyState.classList.remove('hidden');
-                document.getElementById('showing-text').textContent = 'Menampilkan 0 data';
-                renderPagination(0);
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-            }
-
-            const startIndex = (currentPage - 1) * pageSize;
-            const endIndex = Math.min(startIndex + pageSize, filteredPatients.length);
-            const paginatedData = filteredPatients.slice(startIndex, endIndex);
-
-            paginatedData.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-emerald-50/40 transition border-b border-slate-200";
-
-                const dateObj = new Date(p.tanggal);
-                const formattedDate = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-
-                tr.innerHTML = `
-                    <td class="p-3 font-semibold text-slate-700 whitespace-nowrap">${formattedDate}</td>
-                    <td class="p-3">
-                        <div class="font-bold text-slate-900">${escapeHtml(p.nama)}</div>
-                        <div class="text-xs text-slate-500">${p.umur} Thn • <span class="${p.gender==='L'?'text-blue-600':'text-pink-600'} font-semibold">${p.gender==='L'?'Laki-laki':'Perempuan'}</span></div>
-                    </td>
-                    <td class="p-3 whitespace-nowrap">
-                        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                            ${escapeHtml(p.kampung)}
-                        </span>
-                    </td>
-                    <td class="p-3 text-slate-700 max-w-xs text-xs">${escapeHtml(p.keluhan)}</td>
-                    <td class="p-3 text-xs whitespace-nowrap bg-slate-50/80">
-                        <div class="space-y-0.5 text-slate-700">
-                            <div><span class="text-slate-400">TD:</span> <strong>${p.td || '-'}</strong></div>
-                            <div><span class="text-slate-400">N/RR:</span> ${p.nadi || '-'}x / ${p.rr || '-'}x</div>
-                            <div><span class="text-slate-400">S/SpO2:</span> ${p.suhu || '-'}°C / ${p.spo2 || '-'}%</div>
-                        </div>
-                    </td>
-                    <td class="p-3">
-                        <span class="font-semibold text-amber-900 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200 text-xs inline-block">
-                            ${escapeHtml(p.diagnosa)}
-                        </span>
-                    </td>
-                    <td class="p-3 text-slate-700 max-w-xs text-xs font-mono bg-slate-50 rounded p-1.5">${escapeHtml(p.obat)}</td>
-                    <td class="p-3 text-center whitespace-nowrap no-print">
-                        <div class="flex items-center justify-center gap-1">
-                            <button onclick="openModal('${p.id}')" title="Edit Data" class="p-1.5 text-sky-600 hover:bg-sky-50 rounded-lg transition">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="deletePatient('${p.id}')" title="Hapus Data" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('showing-text').textContent = `Menampilkan ${startIndex + 1} - ${endIndex} dari ${filteredPatients.length} data`;
-            renderPagination(Math.ceil(filteredPatients.length / pageSize));
-        }
-
-        function renderPagination(totalPages) {
-            const container = document.getElementById('pagination-controls');
-            container.innerHTML = '';
-            if (totalPages <= 1) return;
-
-            const prevBtn = document.createElement('button');
-            prevBtn.className = `px-2.5 py-1 rounded-lg border text-xs ${currentPage === 1 ? 'text-slate-300 border-slate-200 cursor-not-allowed' : 'text-slate-600 border-slate-300 hover:bg-slate-100'}`;
-            prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.onclick = () => { currentPage--; renderTable(); };
-            container.appendChild(prevBtn);
-
-            for (let i = 1; i <= totalPages; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = `px-2.5 py-1 rounded-lg border text-xs font-semibold ${currentPage === i ? 'bg-corp-800 text-white border-corp-800' : 'text-slate-600 border-slate-300 hover:bg-slate-100'}`;
-                pageBtn.textContent = i;
-                pageBtn.onclick = () => { currentPage = i; renderTable(); };
-                container.appendChild(pageBtn);
-            }
-
-            const nextBtn = document.createElement('button');
-            nextBtn.className = `px-2.5 py-1 rounded-lg border text-xs ${currentPage === totalPages ? 'text-slate-300 border-slate-200 cursor-not-allowed' : 'text-slate-600 border-slate-300 hover:bg-slate-100'}`;
-            nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.onclick = () => { currentPage++; renderTable(); };
-            container.appendChild(nextBtn);
-        }
-
-        // STATS SUMMARY
-        function updateKPIs() {
-            const total = filteredPatients.length;
-            document.getElementById('kpi-total-pasien').textContent = total;
-
-            if (total === 0) {
-                document.getElementById('kpi-top-kampung').textContent = "-";
-                document.getElementById('kpi-top-kampung-sub').textContent = "0 Pasien";
-                document.getElementById('kpi-top-diagnosa').textContent = "-";
-                document.getElementById('kpi-top-diagnosa-sub').textContent = "0 Kasus";
-                document.getElementById('kpi-avg-age').textContent = "0 Thn";
-                document.getElementById('kpi-gender-ratio').textContent = "L: 0% | P: 0%";
-                return;
-            }
-
-            const kCounts = {};
-            filteredPatients.forEach(p => kCounts[p.kampung] = (kCounts[p.kampung] || 0) + 1);
-            const topK = Object.keys(kCounts).reduce((a, b) => kCounts[a] > kCounts[b] ? a : b, "");
-            document.getElementById('kpi-top-kampung').textContent = topK.replace("Kampung ", "");
-            document.getElementById('kpi-top-kampung-sub').textContent = `${kCounts[topK]} Pasien (${Math.round((kCounts[topK]/total)*100)}%)`;
-
-            const dCounts = {};
-            filteredPatients.forEach(p => dCounts[p.diagnosa] = (dCounts[p.diagnosa] || 0) + 1);
-            const topD = Object.keys(dCounts).reduce((a, b) => dCounts[a] > dCounts[b] ? a : b, "");
-            document.getElementById('kpi-top-diagnosa').textContent = topD.split("(")[0];
-            document.getElementById('kpi-top-diagnosa-sub').textContent = `${dCounts[topD]} Kasus (${Math.round((dCounts[topD]/total)*100)}%)`;
-
-            const totalAge = filteredPatients.reduce((acc, p) => acc + (parseInt(p.umur) || 0), 0);
-            document.getElementById('kpi-avg-age').textContent = `${Math.round(totalAge / total)} Thn`;
-
-            const cL = filteredPatients.filter(p => p.gender === 'L').length;
-            const cP = filteredPatients.filter(p => p.gender === 'P').length;
-            document.getElementById('kpi-gender-ratio').textContent = `L: ${Math.round((cL/total)*100)}% | P: ${Math.round((cP/total)*100)}%`;
-        }
-
-        // CHARTS INFOGRAFIS
-        function initCharts() {
-            const ctx1 = document.getElementById('chartKampung').getContext('2d');
-            chartInstances.kampung = new Chart(ctx1, {
-                type: 'bar',
-                data: { labels: [], datasets: [{ label: 'Pasien CSR', data: [], backgroundColor: '#166534', borderRadius: 8 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-            });
-
-            const ctx2 = document.getElementById('chartDiagnosa').getContext('2d');
-            chartInstances.diagnosa = new Chart(ctx2, {
-                type: 'doughnut',
-                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#15803d', '#f59e0b', '#0284c7', '#e11d48', '#8b5cf6', '#10b981', '#64748b', '#06b6d4', '#d97706', '#4f46e5'] }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } }
-            });
-
-            const ctx3 = document.getElementById('chartDemografi').getContext('2d');
-            chartInstances.demografi = new Chart(ctx3, {
-                type: 'bar',
-                data: {
-                    labels: ['Balita (0-5)', 'Anak (6-11)', 'Remaja (12-25)', 'Dewasa (26-45)', 'Lansia (>45)'],
-                    datasets: [
-                        { label: 'Laki-Laki', data: [], backgroundColor: '#0284c7', borderRadius: 6 },
-                        { label: 'Perempuan', data: [], backgroundColor: '#ec4899', borderRadius: 6 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-            });
-
-            const ctx4 = document.getElementById('chartTren').getContext('2d');
-            chartInstances.tren = new Chart(ctx4, {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: 'Pelayanan Pasien', data: [], borderColor: '#22c55e', backgroundColor: 'rgba(34, 197, 94, 0.1)', fill: true, tension: 0.3, pointRadius: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-            });
-
-            updateCharts();
-        }
-
-        function updateCharts() {
-            if (!chartInstances.kampung) return;
-
-            const activeKampungs = [...new Set([...kampungList, ...filteredPatients.map(p => p.kampung)])].sort();
-            const kCounts = activeKampungs.map(k => filteredPatients.filter(p => p.kampung === k).length);
-            chartInstances.kampung.data.labels = activeKampungs.map(k => k.replace("Kampung ", ""));
-            chartInstances.kampung.data.datasets[0].data = kCounts;
-            chartInstances.kampung.update();
-
-            const dCounts = {};
-            filteredPatients.forEach(p => dCounts[p.diagnosa] = (dCounts[p.diagnosa] || 0) + 1);
-            const sortedD = Object.entries(dCounts).sort((a,b) => b[1] - a[1]).slice(0, 10);
-            chartInstances.diagnosa.data.labels = sortedD.map(d => d[0].length > 22 ? d[0].substring(0, 22)+'...' : d[0]);
-            chartInstances.diagnosa.data.datasets[0].data = sortedD.map(d => d[1]);
-            chartInstances.diagnosa.update();
-
-            const ageL = [0, 0, 0, 0, 0];
-            const ageP = [0, 0, 0, 0, 0];
-            filteredPatients.forEach(p => {
-                const u = parseInt(p.umur) || 0;
-                let idx = u <= 5 ? 0 : u <= 11 ? 1 : u <= 25 ? 2 : u <= 45 ? 3 : 4;
-                if (p.gender === 'L') ageL[idx]++;
-                else ageP[idx]++;
-            });
-            chartInstances.demografi.data.datasets[0].data = ageL;
-            chartInstances.demografi.data.datasets[1].data = ageP;
-            chartInstances.demografi.update();
-
-            const dateMap = {};
-            filteredPatients.forEach(p => dateMap[p.tanggal] = (dateMap[p.tanggal] || 0) + 1);
-            const sortedDates = Object.keys(dateMap).sort();
-            chartInstances.tren.data.labels = sortedDates.map(d => {
-                const parts = d.split('-');
-                return `${parts[2]}/${parts[1]}`;
-            });
-            chartInstances.tren.data.datasets[0].data = sortedDates.map(d => dateMap[d]);
-            chartInstances.tren.update();
-        }
-
-        // PATIENT MODAL & FORM
-        function openModal(id = null) {
-            const modal = document.getElementById('patient-modal');
-            const title = document.getElementById('modal-title');
-            const form = document.getElementById('patient-form');
-
-            form.reset();
-            document.getElementById('patient-id').value = '';
-
-            if (id) {
-                const p = patients.find(item => item.id === id);
-                if (p) {
-                    title.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Rekam Medis Pasien CSR';
-                    document.getElementById('patient-id').value = p.id;
-                    document.getElementById('form-tanggal').value = p.tanggal;
-                    document.getElementById('form-kampung').value = p.kampung;
-                    document.getElementById('form-nama').value = p.nama;
-                    document.getElementById('form-umur').value = p.umur;
-                    document.getElementById('form-gender').value = p.gender;
-                    document.getElementById('form-keluhan').value = p.keluhan;
-                    document.getElementById('form-td').value = p.td;
-                    document.getElementById('form-nadi').value = p.nadi;
-                    document.getElementById('form-rr').value = p.rr;
-                    document.getElementById('form-suhu').value = p.suhu;
-                    document.getElementById('form-spo2').value = p.spo2;
-                    document.getElementById('form-diagnosa').value = p.diagnosa;
-                    document.getElementById('form-obat').value = p.obat;
-                }
-            } else {
-                title.innerHTML = '<i class="fa-solid fa-user-plus"></i> Tambah Rekam Medis Pasien CSR Baru';
-                document.getElementById('form-tanggal').value = new Date().toISOString().split('T')[0];
-            }
-
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('patient-modal').classList.add('hidden');
-        }
-
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('patient-id').value;
-            
-            const newPatientData = {
-                id: id || `GPA-${Date.now().toString().slice(-4)}`,
-                tanggal: document.getElementById('form-tanggal').value,
-                kampung: document.getElementById('form-kampung').value,
-                nama: document.getElementById('form-nama').value.trim(),
-                umur: parseInt(document.getElementById('form-umur').value),
-                gender: document.getElementById('form-gender').value,
-                keluhan: document.getElementById('form-keluhan').value.trim(),
-                td: document.getElementById('form-td').value.trim() || '-',
-                nadi: document.getElementById('form-nadi').value || '-',
-                rr: document.getElementById('form-rr').value || '-',
-                suhu: document.getElementById('form-suhu').value || '-',
-                spo2: document.getElementById('form-spo2').value || '-',
-                diagnosa: document.getElementById('form-diagnosa').value.trim(),
-                obat: document.getElementById('form-obat').value.trim()
-            };
-
-            if (id) {
-                const index = patients.findIndex(p => p.id === id);
-                if (index !== -1) patients[index] = newPatientData;
-                Swal.fire({ icon: 'success', title: 'Tersimpan', text: 'Rekam medis pasien berhasil diubah!', timer: 1500, showConfirmButton: false });
-            } else {
-                patients.unshift(newPatientData);
-                Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Pasien CSR baru berhasil ditambahkan!', timer: 1500, showConfirmButton: false });
-            }
-
-            saveAllData();
-            populateKampungDropdowns();
-            populateDiagnosaDropdown();
-            applyFilters();
-            closeModal();
-        }
-
-        function deletePatient(id) {
-            Swal.fire({
-                title: 'Hapus Rekam Medis?',
-                text: "Data pasien ini akan dihapus permanen.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Ya, Hapus!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    patients = patients.filter(p => p.id !== id);
-                    saveAllData();
-                    populateKampungDropdowns();
-                    populateDiagnosaDropdown();
-                    applyFilters();
-                    Swal.fire('Terhapus!', 'Rekam medis pasien berhasil dihapus.', 'success');
-                }
-            });
-        }
-
-        // EXPORT CSV
-        function exportToCSV() {
-            if (filteredPatients.length === 0) {
-                Swal.fire({ icon: 'info', title: 'Kosong', text: 'Tidak ada data untuk diexport!' });
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "ID CSR,Tanggal Pelaksanaan,Areal Kampung,Nama Pasien,Umur,Jenis Kelamin,Keluhan Utama,TD,Nadi,RR,Suhu,SpO2,Diagnosa Medis,Obat Terapi\n";
-
-            filteredPatients.forEach(p => {
-                const row = [
-                    `"${p.id}"`,
-                    `"${p.tanggal}"`,
-                    `"${p.kampung}"`,
-                    `"${p.nama}"`,
-                    `"${p.umur}"`,
-                    `"${p.gender}"`,
-                    `"${p.keluhan.replace(/"/g, '""')}"`,
-                    `"${p.td}"`,
-                    `"${p.nadi}"`,
-                    `"${p.rr}"`,
-                    `"${p.suhu}"`,
-                    `"${p.spo2}"`,
-                    `"${p.diagnosa.replace(/"/g, '""')}"`,
-                    `"${p.obat.replace(/"/g, '""')}"`
-                ].join(",");
-                csvContent += row + "\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `CSR_KESEHATAN_PT_GLOBAL_PAPUA_ABADI_LAPORAN.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function printReport() {
-            window.print();
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text.toString()
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-    </script>
-</body>
+    <!-- ================= MODAL: UPLOAD DATA ================= -->
+    <div id="modal-upload" hidden class="modal no-print">
+      <div class="modal-panel max-w-4xl">
+        <div class="modal-header">
+          <h3 class="flex items-center gap-2 text-lg font-bold"><i class="fa-solid fa-file-arrow-up"></i> Upload Data Pasien (Excel / CSV)</h3>
+          <button data-close class="cursor-pointer text-xl text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="space-y-4 overflow-y-auto p-6 text-sm">
+          <ol class="list-inside list-decimal space-y-1 rounded-xl border border-sky-200 bg-sky-50 p-4 text-xs text-sky-900">
+            <li>Unduh template, lalu isi satu baris untuk setiap pasien.</li>
+            <li>Kolom wajib: <strong>Tanggal, Kampung, Nama, Umur, Jenis Kelamin (L/P), Diagnosa</strong>.</li>
+            <li>Kampung yang belum terdaftar akan ditambahkan otomatis. File hasil export dari sistem ini juga bisa diupload kembali.</li>
+          </ol>
+          <div class="flex flex-wrap gap-2">
+            <button data-action="download-template" class="btn-light"><i class="fa-solid fa-download"></i> Unduh Template Excel</button>
+          </div>
+          <label id="upload-drop" class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center transition hover:border-corp-500 hover:bg-emerald-50">
+            <i class="fa-solid fa-cloud-arrow-up text-4xl text-corp-700"></i>
+            <span class="font-semibold text-slate-700">Klik untuk memilih file atau seret file ke sini</span>
+            <span class="text-xs text-slate-500">Format: .xlsx, .xls, .csv</span>
+            <input id="upload-file" type="file" accept=".xlsx,.xls,.csv" hidden class="" />
+          </label>
+
+          <div id="upload-preview" hidden class="space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p id="upload-summary" class="text-sm font-medium"></p>
+              <button data-action="reset-upload" class="btn-light py-1 text-xs"><i class="fa-solid fa-xmark"></i> Ganti File</button>
+            </div>
+            <div class="max-h-72 overflow-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="sticky top-0 bg-slate-100 text-slate-600">
+                  <tr>
+                    <th class="p-2">Baris</th><th class="p-2">Tanggal</th><th class="p-2">Kampung</th><th class="p-2">Nama</th>
+                    <th class="p-2">Umur</th><th class="p-2">JK</th><th class="p-2">Diagnosa</th><th class="p-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="upload-tbody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 p-4">
+          <button data-close class="btn-light">Batal</button>
+          <button data-action="submit-upload" id="upload-submit" disabled class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL: KELOLA KAMPUNG ================= -->
+    <div id="modal-kampung" hidden class="modal no-print">
+      <div class="modal-panel max-w-lg">
+        <div class="modal-header">
+          <h3 class="flex items-center gap-2 text-base font-bold"><i class="fa-solid fa-map-location-dot text-emerald-300"></i> Kelola Areal / Kampung</h3>
+          <button data-close class="cursor-pointer text-lg text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="space-y-5 overflow-y-auto p-6 text-sm">
+          <form id="form-kampung" class="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4">
+            <h4 id="kampung-form-title" class="text-xs font-bold tracking-wider text-corp-900 uppercase">Tambah Kampung Baru</h4>
+            <input type="hidden" name="id" />
+            <div class="flex gap-2">
+              <input type="text" name="nama" required placeholder="Contoh: Kampung Tambat" class="input flex-1" />
+              <button type="submit" id="kampung-submit" class="btn-primary text-xs"><i class="fa-solid fa-plus"></i> Tambah</button>
+              <button type="button" id="kampung-cancel" data-action="cancel-kampung-edit" hidden class="btn-light text-xs">Batal</button>
+            </div>
+          </form>
+          <div>
+            <h4 class="mb-2 text-xs font-bold tracking-wider text-slate-700 uppercase">Daftar Kampung (<span id="kampung-count">0</span>)</h4>
+            <div id="kampung-list" class="max-h-72 space-y-2 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL: KELOLA PENGGUNA ================= -->
+    <div id="modal-users" hidden class="modal no-print">
+      <div class="modal-panel max-w-2xl">
+        <div class="modal-header">
+          <h3 class="flex items-center gap-2 text-base font-bold"><i class="fa-solid fa-users-gear text-emerald-300"></i> Kelola Pengguna / Petugas</h3>
+          <button data-close class="cursor-pointer text-lg text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="space-y-5 overflow-y-auto p-6 text-sm">
+          <form id="form-user" class="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4">
+            <h4 class="text-xs font-bold tracking-wider text-corp-900 uppercase">Tambah Petugas Baru</h4>
+            <p class="text-xs text-slate-600">Petugas dapat langsung masuk dengan email &amp; kata sandi ini, dan memiliki akses penuh untuk mengelola data.</p>
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <input type="text" name="name" placeholder="Nama petugas" class="input" />
+              <input type="email" name="email" required placeholder="email@contoh.com" autocomplete="off" class="input" />
+              <input type="password" name="password" required minlength="8" placeholder="Kata sandi (min. 8)" autocomplete="new-password" class="input" />
+            </div>
+            <div class="text-right">
+              <button type="submit" class="btn-primary text-xs"><i class="fa-solid fa-user-plus"></i> Tambah Petugas</button>
+            </div>
+          </form>
+          <div>
+            <h4 class="mb-2 text-xs font-bold tracking-wider text-slate-700 uppercase">Daftar Petugas (<span id="users-count">0</span>)</h4>
+            <div id="users-list" class="max-h-72 space-y-2 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

@@ -1,0 +1,40 @@
+{
+  "name": "csr-kesehatan-gpa",
+  "version": "1.0.0",
+  "description": "Sistem Informasi Laporan Pelayanan Kesehatan CSR PT Global Papua Abadi",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "db:generate": "drizzle-kit generate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jihanazii59-lang/ujicobacsrkesehatan.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/jihanazii59-lang/ujicobacsrkesehatan/issues"
+  },
+  "homepage": "https://github.com/jihanazii59-lang/ujicobacsrkesehatan#readme",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "@netlify/database": "^2.0.1",
+    "@netlify/identity": "^2.0.0",
+    "chart.js": "^4.6.1",
+    "drizzle-orm": "^1.0.0-beta.22",
+    "sweetalert2": "^11.26.25",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^6.0.3",
+    "@tailwindcss/vite": "^4.3.3",
+    "drizzle-kit": "^1.0.0-beta.22",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  },
+  "private": true
+}
